@@ -9,7 +9,6 @@ use Cormy\Server\Helpers\Response;
 use Cormy\Server\Helpers\MultiDelegationMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\ServerRequest;
 use Interop\Http\Middleware\DelegateInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
@@ -88,7 +87,7 @@ class GreenOnionTest extends \PHPUnit_Framework_TestCase
         $finalHandler = new FinalHandler('Final!');
         $middlewares = [
             new class() implements DelegateInterface {
-                function process(RequestInterface $request) : ResponseInterface
+                function process(ServerRequestInterface $request) : ResponseInterface
                 {
                     return new Response('Delegate!');
                 }
@@ -116,7 +115,7 @@ class GreenOnionTest extends \PHPUnit_Framework_TestCase
     public function testPsrDelegatesShouldBeValidCore()
     {
         $finalHandler = new class() implements DelegateInterface {
-            function process(RequestInterface $request) : ResponseInterface
+            function process(ServerRequestInterface $request) : ResponseInterface
             {
                 return new Response('Delegate!');
             }
@@ -137,11 +136,11 @@ class GreenOnionTest extends \PHPUnit_Framework_TestCase
         $finalHandler = new FinalHandler('Final!');
         $middlewares = [
             new CounterMiddleware(0),
-            function (ServerRequest $request) {
+            function (ServerRequestInterface $request) {
                 return new Response('Abort by '.$request->getHeader('X-PoweredBy')[0].'!');
             },
             new CounterMiddleware(1),
-            function (ServerRequest $request) {
+            function (ServerRequestInterface $request) {
                 $response = (yield $request->withHeader('X-PoweredBy', 'Unicorns'));
 
                 return $response;

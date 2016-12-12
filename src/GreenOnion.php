@@ -3,7 +3,6 @@
 namespace Cormy\Server;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Interop\Http\Middleware\DelegateInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
@@ -81,7 +80,7 @@ class GreenOnion implements DelegateInterface, RequestHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function process(RequestInterface $request)
+    public function process(ServerRequestInterface $request)
     {
         return ($this)($request);
     }
