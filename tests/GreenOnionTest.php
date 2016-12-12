@@ -10,7 +10,7 @@ use Cormy\Server\Helpers\MultiDelegationMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequest;
-use Interop\Http\Middleware\DelegateInterface;
+use Interop\Http\Middleware\RequestHandlerInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
 
 class GreenOnionTest extends \PHPUnit_Framework_TestCase
@@ -86,8 +86,8 @@ class GreenOnionTest extends \PHPUnit_Framework_TestCase
     {
         $finalHandler = new FinalHandler('Final!');
         $middlewares = [
-            new class() implements DelegateInterface {
-                function process(ServerRequestInterface $request) : ResponseInterface
+            new class() implements RequestHandlerInterface {
+                function __invoke(ServerRequestInterface $request) : ResponseInterface
                 {
                     return new Response('Delegate!');
                 }
@@ -95,9 +95,9 @@ class GreenOnionTest extends \PHPUnit_Framework_TestCase
             new CounterMiddleware(0),
             new CounterMiddleware(1),
             new class() implements ServerMiddlewareInterface {
-                function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
+                function __invoke(ServerRequestInterface $request, RequestHandlerInterface $next) : ResponseInterface
                 {
-                    return $delegate->process($request)->withHeader('X-PoweredBy', 'Unicorns');
+                    return $next($request)->withHeader('X-PoweredBy', 'Unicorns');
                 }
             },
             new CounterMiddleware(2),
@@ -114,8 +114,8 @@ class GreenOnionTest extends \PHPUnit_Framework_TestCase
 
     public function testPsrDelegatesShouldBeValidCore()
     {
-        $finalHandler = new class() implements DelegateInterface {
-            function process(ServerRequestInterface $request) : ResponseInterface
+        $finalHandler = new class() implements RequestHandlerInterface {
+            function __invoke(ServerRequestInterface $request) : ResponseInterface
             {
                 return new Response('Delegate!');
             }

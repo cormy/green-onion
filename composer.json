@@ -31,12 +31,18 @@
             "Cormy\\Server\\": "tests"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/schnittstabil/http-middleware"
+        }
+    ],
     "require": {
         "php": ">=7",
         "psr/http-message": "^1.0",
         "cormy/server-request-handler": "^0.1.0",
         "cormy/server-middleware": "^0.1.0",
-        "http-interop/http-middleware": "dev-master#e63d05c"
+        "http-interop/http-middleware": "dev-invoke-proposal#1a14a25"
     },
     "require-dev": {
         "sugared-rim/phpunit": "^2.0",

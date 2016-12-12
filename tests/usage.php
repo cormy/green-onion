@@ -8,7 +8,7 @@ require __DIR__.'/../vendor/autoload.php';
 use Cormy\Server\GreenOnion;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Interop\Http\Middleware\DelegateInterface;
+use Interop\Http\Middleware\RequestHandlerInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
 
 // create the core of the onion, i.e. the innermost request handler
@@ -20,10 +20,10 @@ $core = function (ServerRequestInterface $request) : ResponseInterface {
 $scales = [];
 
 $scales[] = new class implements ServerMiddlewareInterface {
-    function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
+    function __invoke(ServerRequestInterface $request, RequestHandlerInterface $next) : ResponseInterface
     {
         // delegate $request to the next request handler, i.e. $core
-        $response = $delegate->process($request);
+        $response = $next($request);
 
         return $response->withHeader('content-type', 'application/json; charset=utf-8');
     }
